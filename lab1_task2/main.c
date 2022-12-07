@@ -10,10 +10,16 @@ int main(int argc, char *argv[]) {
 
     pid_t pid = fork();
     if (pid == 0) {
-        printf("I am a child process: %d\n", getppid());
+        char *program = argv[1];
+        char *arguments[argc];
+        for (int i = 1; i <= argc; i++) {
+            arguments[i-1] = argv[i];
+        }
+        arguments[argc] = NULL;
+
+        execvp(program, arguments);
     } else {
         waitpid(pid, NULL, 0);
-        printf("I am a parent process: %d\n", getppid());
     }
 
     return 0;
