@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     } else {
         waitpid(pid, &status, 0);
         if (status == 0) {
-            printf("Success.");
+            printf("Success.\n");
         } else {
             printf("Failed, exit code = %d\n", status);
         }
