@@ -20,7 +20,11 @@ fn panic(_info: &PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     let mut screen = Screen::new(DEFAULT_COLOR, Alignment::Left);
 
-    screen.print_hello_world();
+    // screen.print_hello_world();
+
+    for i in 1..30 {
+        write!(screen, "Number {i}\n");
+    }
 
     loop {}
 }
