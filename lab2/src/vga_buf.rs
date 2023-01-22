@@ -9,19 +9,20 @@ pub const DEFAULT_COLOR: u8 = (COLOR_BLACK << 4) | COLOR_LIGHT_GREEN;
 
 pub struct AsciiChar {
     pub char_byte: u8,
-    pub color_byte: u8
+    pub color_byte: u8,
 }
 
 pub enum Alignment {
-    Left, 
-    Right, 
-    Center
+    Left,
+    Right,
+    Center,
 }
 
 pub struct Screen {
     buffer: *mut u8,
     color: u8,
-    align: Alignment
+    align: Alignment,
+    col_pos: u32,
 }
 
 impl core::fmt::Write for Screen {
@@ -32,25 +33,40 @@ impl core::fmt::Write for Screen {
 }
 
 impl Screen {
-    
     pub fn new(color: u8, align: Alignment) -> Screen {
-        return Screen{
+        return Screen {
             buffer: BUF_ADDR as *mut u8,
             color,
-            align
-        }
+            align,
+            col_pos: 0,
+        };
     }
 
     pub fn print_hello_world(&mut self) {
         let mut i = 0;
         for byte in "Hello world!".bytes() {
-            self.write_char(i, AsciiChar{char_byte: byte, color_byte: self.color});
+            self.write_char(i, AsciiChar { char_byte: byte, color_byte: self.color });
             i += 1;
         }
     }
 
     pub fn print(&mut self, s: &str) {
-        // implement print
+        for byte in s.bytes() {
+            let byte_offset: u32 = (self.col_pos / BUF_WIDTH + 1) * BUF_WIDTH;
+
+            match byte {
+                b'\n' => {
+                    while self.col_pos < byte_offset {
+                        self.write_char(self.col_pos, AsciiChar { char_byte: b' ', color_byte: self.color });
+                        self.col_pos += 1;
+                    }
+                }
+                byte => {
+                    self.write_char(self.col_pos, AsciiChar { char_byte: byte, color_byte: self.color });
+                    self.col_pos += 1;
+                }
+            }
+        }
     }
 
     pub fn write_char(&self, offset: u32, char: AsciiChar) {
@@ -62,10 +78,10 @@ impl Screen {
 
     pub fn read_char(&self, offset: u32) -> AsciiChar {
         unsafe {
-            return AsciiChar{
+            return AsciiChar {
                 char_byte: *self.buffer.offset(offset as isize * 2),
-                color_byte: *self.buffer.offset(offset as isize * 2 + 1)
-            }
+                color_byte: *self.buffer.offset(offset as isize * 2 + 1),
+            };
         }
     }
 }
