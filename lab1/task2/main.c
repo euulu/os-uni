@@ -14,10 +14,10 @@ int main(int argc, char *argv[]) {
     if (pid == 0) {
         char *program = argv[1];
         char *arguments[argc];
-        for (int i = 1; i <= argc; i++) {
+        for (int i = 1; i < argc; i++) {
             arguments[i - 1] = argv[i];
         }
-        arguments[argc] = NULL;
+        arguments[argc - 1] = NULL;
 
         int exec_exit = execvp(program, arguments);
         if (exec_exit == -1) {
