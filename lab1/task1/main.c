@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include "sys/wait.h"
+#include <sys/wait.h>
 
 int main() {
     pid_t pid1, pid2, pid3, pid4;
@@ -24,7 +24,9 @@ int main() {
             if (pid4 == 0) {
                 sleep(10);
             } else {
-                waitpid(pid1, NULL, 0);
+                // This is the most outer parent.
+                // Wait for all the child processes.
+                while (wait(NULL) > 0);
             }
         }
     }
