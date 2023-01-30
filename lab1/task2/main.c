@@ -22,11 +22,15 @@ int main(int argc, char *argv[]) {
         execvp(program, arguments);
         exit(1);
     } else {
-        waitpid(pid, &status, 0);
-        if (status == 0) {
-            printf("Success.\n");
+        waitpid(pid, &status, WUNTRACED);
+        if (WIFEXITED(status)) {
+            if (WEXITSTATUS(status) == 0) {
+                printf("Success.\n");
+            } else {
+                printf("Failed, exit code = %d\n", status);
+            }
         } else {
-            printf("Failed, exit code = %d\n", status);
+            printf("Process exited not normally.");
         }
     }
 
