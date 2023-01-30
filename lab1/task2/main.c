@@ -19,10 +19,8 @@ int main(int argc, char *argv[]) {
         }
         arguments[argc - 1] = NULL;
 
-        int exec_exit = execvp(program, arguments);
-        if (exec_exit == -1) {
-            exit(1);
-        }
+        execvp(program, arguments);
+        exit(1);
     } else {
         waitpid(pid, &status, 0);
         if (status == 0) {
